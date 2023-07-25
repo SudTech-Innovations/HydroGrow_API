@@ -49,5 +49,6 @@ sequelize db:migrate
 npm install jsonwebtoken --save
 npm install bcrypt --save
 npm install body-parser --save
+npm install async --save
 ```
 

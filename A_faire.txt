@@ -1,8 +1,11 @@
+Fonction waterfall :
+
+
 // Imports 
 const bcrypt = require('bcrypt');
 const models = require('../models');
 const jwtUtils = require('../utils/jwt.utils');
-// const asyncLib = require('async');
+const asyncLib = require('async');
 
 // Création des regex pour le mail et le mot de passe
 const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -32,6 +35,57 @@ module.exports = {
         if (!PASSWORD_REGEX.test(password)) {
             return res.status(400).json({ 'error': 'password invalid (must length 8 and include 1 uppercase letter, 1 lowercase letter and 1 number)' });
         }
+
+        // Utiliser la fonction waterfall d'async pour éviter l'indentation
+        asyncLib.waterfall([
+            function (done) {
+                models.User.findOne({
+                    attributes: ['email'],
+                    where: { email: email }
+                })
+                    .then(function (userFound) {
+                        done(null, userFound);
+                    })
+                    .catch(function (err) {
+                        return res.status(500).json({ 'error': 'unable to verify user' });
+                    });
+            },
+
+            function (userFound, done) {
+                if (!userFound) {
+                    bcrypt.hash(password, 5, function (err, bcryptedPassword) {
+                        done(null, userFound, bcryptedPassword);
+                    });
+                } else {
+                    return res.status(409).json({ 'error': 'user already exist' });
+                }
+            },
+            function (userFound, bcryptedPassword, done) {
+                const newUser = models.User.create({
+                    email: email,
+                    username: username,
+                    password: bcryptedPassword,
+                    isAdmin: 0
+                })
+                    .then(function (newUser) {
+                        done(newUser);
+                    })
+                    .catch(function (err) {
+                        return res.status(500).json({ 'error': 'cannot add user' });
+                    });
+            }
+
+        ], function (newUser) {
+            if (newUser) {
+                return res.status(201).json({
+                    'userId': newUser.id
+                });
+            } else {
+                return res.status(500).json({ 'error': 'cannot add user' });
+            }
+        })
+
+
 
 
         // Vérifier si l'utilisateur existe déjà
