@@ -11,6 +11,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      // Un utilisateur peut avoir un seule licence à la fois
+      models.User.hasOne(models.Licence);
     }
   }
   User.init({

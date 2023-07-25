@@ -25,7 +25,8 @@ nodemon
 ## Si besoin : Créer un modèle 
 Exemple :
 ```
-sequelize model:create --name User --attributes "email:string,username:string,password:string" 
+sequelize model:create --name User --attributes "email:string,username:string,password:string"
+sequelize model:create --name Licence --attributes "sn:string,nbUser:integer,startDate:date,endDate:date" 
 ```
 
 # Base de donnée 
