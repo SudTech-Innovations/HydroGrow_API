@@ -1,4 +1,4 @@
 # HydroGrow_API
  
-## Préréquis
+## Prérequis
 
