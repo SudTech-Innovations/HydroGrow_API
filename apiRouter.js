@@ -13,6 +13,8 @@ exports.router = (function () {
     // Définir les routes
     apiRouter.route('/users/register/').post(usersCtrl.register);
     apiRouter.route('/users/login/').post(usersCtrl.login);
+    apiRouter.route('/users/me/').get(usersCtrl.getUserProfile);
+    apiRouter.route('/users/put/').put(usersCtrl.updateUserProfile);
 
     return apiRouter;
 }

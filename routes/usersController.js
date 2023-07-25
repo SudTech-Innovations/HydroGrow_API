@@ -95,5 +95,73 @@ module.exports = {
                 return res.status(500).json({ 'error': 'unable to log in user' });
             }
         });
+    },
+    // Fonction getUserProfile
+    getUserProfile: function (req, res) {
+        // Récupérer l'en-tête d'autorisation
+        let headerAuth = req.headers['authorization'];
+        let userId = jwtUtils.getUserId(headerAuth);
+
+        // Vérifier si l'utilisateur existe
+        if (userId < 0)
+            return res.status(400).json({ 'error': 'wrong token' });
+
+        // Récupérer l'utilisateur
+        models.User.findOne({
+            attributes: ['id', 'username'],
+            where: { id: userId }
+        }).then(function (user) {
+            if (user)
+                res.status(201).json(user);
+            else
+                res.status(404).json({ 'error': 'user not found' });
+        }).catch(function (err) {
+            res.status(500).json({ 'error': 'cannot fetch user' });
+        });
+    },
+    updateUserProfile: function (req, res) {
+        // Récupérer l'en-tête d'autorisation
+        let headerAuth = req.headers['authorization'];
+        let userId = jwtUtils.getUserId(headerAuth);
+
+        // Paramètres
+        let username = req.body.username;
+
+        asyncLib.waterfall([
+            // Vérifier si l'utilisateur existe
+            function (done) {
+                models.User.findOne({
+                    attributes: ['id', 'username'],
+                    where: { id: userId }
+                }).then(function (userFound) {
+                    done(null, userFound);
+                }).catch(function (err) {
+                    return res.status(500).json({ 'error': 'unable to verify user' });
+                });
+            },
+            // Mettre à jour l'utilisateur
+            function (userFound, done) {
+                if (userFound) {
+                    userFound.update({
+                        username: (username ? username : userFound.username)
+                    }).then(function () {
+                        done(userFound);
+                    }).catch(function (err) {
+                        res.status(500).json({ 'error': 'cannot update user' });
+                    });
+                } else {
+                    res.status(404).json({ 'error': 'user not found' });
+                }
+            },
+            // Récupérer l'utilisateur
+            function (userFound) {
+                if (userFound) {
+                    return res.status(201).json(userFound);
+                } else {
+                    return res.status(500).json({ 'error': 'cannot update user profile' });
+                }
+            }
+
+        ])
     }
 }
