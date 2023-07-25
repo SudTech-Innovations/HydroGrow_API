@@ -1,0 +1,19 @@
+Dans le fichier de configuration jwt.utils.js :
+
+// Importation
+const jwt = require('jsonwebtoken');
+
+// A NE JAMAIS FAIRE FUITE
+const JWT_SIGN_SECRET = "(votre clé secrète))";
+
+// Fonction exportée
+module.exports = {
+    generateTokenForUser: function (userData) {
+        return jwt.sign({
+            userId: userData.id,
+            isAdmin: userData.isAdmin
+        })
+    }
+}
+
+// Ne jamais mettre d'information confidentielle dans le token

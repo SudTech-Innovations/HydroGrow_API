@@ -1,3 +1,10 @@
+# Fichiers de configuration IDE & node
 .vs
 node_modules
+
+# Données confidentielles (à ne pas commiter)
 config/config.json
+utils/jwt.utils.js
+
+# Autres 
+aide-moi-copilot.txt

@@ -27,3 +27,27 @@ Exemple :
 ```
 sequelize model:create --name User --attributes "email:string,username:string,password:string" 
 ```
+
+# Base de donnée 
+
+## Créer une base 
+```
+create database bdd_api_development;
+create database bdd_api_test;
+create database bdd_api_production;
+```
+
+Migrer les bases :
+```
+sequelize db:migrate
+```
+
+# Créer un système d'authentification
+
+## Prérequis
+```
+npm install jsonwebtoken --save
+npm install bcrypt --save
+npm install body-parser --save
+```
+
