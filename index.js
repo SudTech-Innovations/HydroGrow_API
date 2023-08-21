@@ -11,7 +11,7 @@ server.use(bodyParser.json());
 // Définir la route racine
 server.get('/', function (req, res) {
     res.setHeader('Content-Type', 'text/html');
-    res.status(200).send('<h1>Bonjour sur mon serveur</h1>');
+    res.status(200).send('<h1>Serveur en marche</h1>');
 });
 
 // Utiliser le routeur apiRouter pour les routes sous le préfixe '/api/'
